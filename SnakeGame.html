@@ -1,0 +1,106 @@
+<canvas id="gc" width="400" height="400"></canvas>
+<script>
+window.onload=function() {
+    canv=document.getElementById("gc");
+    ctx=canv.getContext("2d");
+    document.addEventListener("keydown",keyPush);
+    setInterval(game,1000/15);
+}
+px=py=10;  //zmija 
+gs=tc=20;  // velicina kocke glave zmije, hrane i crne podloge u pixelima
+ax=ay=15;  // hrana
+xv=yv=0;   //smjer  kretnje zmije
+trail=[];  // cell of snake, kocka od zmije duljina u beskonacnosti
+tail = 5;
+
+var count=0;
+var best=0;
+var tren=0;
+
+Start();
+
+function game() {
+    px+=xv;
+    py+=yv;
+
+    Score();
+    	
+
+    if(px<0) {  // zmija nastavlja putanju nakon kraja ekrana na drugom kraju ekrana tj, na pocetku ekrana
+        px= tc-1;
+    }
+    if(px>tc-1) {
+        px= 0;
+    }
+    if(py<0) {
+        py= tc-1;
+    }
+    if(py>tc-1) {
+        py= 0;
+    }
+    ctx.fillStyle="black";
+    ctx.fillRect(0,0,canv.width,canv.height);
+ 
+    ctx.fillStyle="lime";
+    for(var i=0;i<trail.length;i++) {
+        ctx.fillRect(trail[i].x*gs,trail[i].y*gs,gs-2,gs-2);
+        if(trail[i].x==px && trail[i].y==py) {
+            tail = 5;
+	    count=0;
+	    GameOver();
+        }
+    }
+    trail.push({x:px,y:py});  //naprijed je uvijek glava
+    while(trail.length>tail) { // kako se zmija udaljava tako i njen rep se udaljava da ne bi ostao beskonacan trag
+    trail.shift();
+    }
+ 
+    if(ax==px && ay==py) {
+        
+	tail++;
+
+	count++;
+	tren=count;
+	    if(count>best){
+	    best=count;
+	    }    
+
+        ax=Math.floor(Math.random()*tc);
+        ay=Math.floor(Math.random()*tc);
+	console.log(Math.floor(Math.random()*tc));
+
+    }
+    ctx.fillStyle="red";
+    ctx.fillRect(ax*gs,ay*gs,gs-2,gs-2);
+}
+function keyPush(evt) {
+    if(evt.keyCode == 37 && xv == 0) {
+           xv=-1;yv=0;
+    }
+        if(evt.keyCode == 38 && yv == 0) {
+            xv=0;yv=-1;
+		}
+        if(evt.keyCode == 39 && xv == 0) {
+            xv=1;yv=0;
+	}
+        if(evt.keyCode == 40 && yv == 0) {
+            xv=0;yv=1;
+	}
+    
+}
+function Start(){
+	if(px == 10){
+	xv=-1; yv=0;
+	}
+
+}
+function Score(){
+document.getElementById("mau").innerHTML="Score: "+count;   
+}
+function GameOver(){
+alert("Game Over"+"\nScore: "+tren+"\nBest Score: "+best);
+}
+
+
+</script>
+<p id="mau"><p>
